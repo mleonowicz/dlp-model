@@ -1,3 +1,26 @@
+## Info
+
+This is a stub code repo for a deep learning project that will be trained and deployed with [Amazon SageMaker Pipelines](https://docs.aws.amazon.com/sagemaker/latest/dg/pipelines-sdk.html).
+
+This repository will contain code of the model and the model deployment code will be provided in [dlp-deploy](https://github.com/mleonowicz/dlp-deploy).
+
+The specific problem, data and model are to be announced.
+
+The current stub comes from Amazon SageMaker Pipelines template as described in [SageMaker MLOps Project Walkthrough](https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-projects-walkthrough.html).
+
+The stub defines a pipeline that:
+  * Preprocesses data ([pipelines/abalone/pipeline.py#L160](https://github.com/mleonowicz/dlp-model/blob/main/pipelines/abalone/pipeline.py#L160)). Dataset reference follows in [Dataset for the Example Abalone Pipeline](#dataset-for-the-example-abalone-pipeline).
+  * Trains a model for abalone age prediction with XGBoost ([pipelines/abalone/pipeline.py#L183](https://github.com/mleonowicz/dlp-model/blob/main/pipelines/abalone/pipeline.py#L183)).
+  * Evaluates the model ([pipelines/abalone/pipeline.py#L232](https://github.com/mleonowicz/dlp-model/blob/main/pipelines/abalone/pipeline.py#L232)).
+  * Registers the model to a model registry ([pipelines/abalone/pipeline.py#L271](https://github.com/mleonowicz/dlp-model/blob/main/pipelines/abalone/pipeline.py#L271)) based on mean square error from evaluation ([pipelines/abalone/pipeline.py#L300](https://github.com/mleonowicz/dlp-model/blob/main/pipelines/abalone/pipeline.py#L300)).
+
+Team members:
+* [@kjpolak](https://github.com/kjpolak/)
+* [@mleonowicz](https://github.com/mleonowicz/)
+* [@madziejm](https://github.com/madziejm/)
+
+Original README info from the template follows below.
+
 ## Layout of the SageMaker ModelBuild Project Template
 
 The template provides a starting point for bringing your SageMaker Pipeline development to production.
