@@ -1,40 +1,38 @@
 ## Info
 
-This is a stub code repo for a deep learning project that will be trained and deployed with [Amazon SageMaker Pipelines](https://docs.aws.amazon.com/sagemaker/latest/dg/pipelines-sdk.html).
+This repository contains code for a simple, end-to-end ML workflow for traffic sign classification for [GTSRB](https://www.kaggle.com/datasets/meowmeowmeowmeowmeow/gtsrb-german-traffic-sign) dataset. The workflow is implemented with [Amazon SageMaker Pipelines](https://docs.aws.amazon.com/sagemaker/latest/dg/pipelines-sdk.html). Pipeline is defined with [SageMaker SDK](https://sagemaker.readthedocs.io/en/stable/).
 
-This repository will contain code of the model and the model deployment code will be provided in [dlp-deploy](https://github.com/mleonowicz/dlp-deploy).
 
-The specific problem, data and model are to be announced.
+The repository is based on a template described in [SageMaker MLOps Project Walkthrough](https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-projects-walkthrough.html). Additional references follow in:
+1. https://github.com/aws-samples/aws-sagemaker-pipelines-skin-classification/
+2. https://github.com/aws-samples/amazon-sagemaker-pipelines-mxnet-image-classification/
 
-The current stub comes from Amazon SageMaker Pipelines template as described in [SageMaker MLOps Project Walkthrough](https://docs.aws.amazon.com/sagemaker/latest/dg/sagemaker-projects-walkthrough.html).
+The pipeline:
+  * Splits the dataset and converts it to RecordIO format in  ([pipelines/road-sign/pipeline.py#L112](https://github.com/mleonowicz/dlp-model/blob/main/pipelines/road-sign/pipeline.py#L112)). It is assumed, that the dataset is uploaded to S3 beforehand.
+  * Trains a classification model with transfer learning based on an already trained model ([pipelines/road-sign/pipeline.py#L151](https://github.com/mleonowicz/dlp-model/blob/main/pipelines/road-sign/pipeline.py#L151)).
+  * Evaluates the model on the test dataset ([pipelines/road-sign/pipeline.py#L199](https://github.com/mleonowicz/dlp-model/blob/main/pipelines/road-sign/pipeline.py#L199)).
+  * Registers the model to a model registry ([pipelines/road-sign/pipeline.py#L251](https://github.com/mleonowicz/dlp-model/blob/main/pipelines/road-sign/pipeline.py#L251)) when mean square error from the evaluation is lower than a specified threshold ([pipelines/road-sign/pipeline.py#L273](https://github.com/mleonowicz/dlp-model/blob/main/pipelines/road-sign/pipeline.py#L273)).
 
-The stub defines a pipeline that:
-  * Preprocesses data ([pipelines/abalone/pipeline.py#L160](https://github.com/mleonowicz/dlp-model/blob/main/pipelines/abalone/pipeline.py#L160)). Dataset reference follows in [Dataset for the Example Abalone Pipeline](#dataset-for-the-example-abalone-pipeline).
-  * Trains a model for abalone age prediction with XGBoost ([pipelines/abalone/pipeline.py#L183](https://github.com/mleonowicz/dlp-model/blob/main/pipelines/abalone/pipeline.py#L183)).
-  * Evaluates the model ([pipelines/abalone/pipeline.py#L232](https://github.com/mleonowicz/dlp-model/blob/main/pipelines/abalone/pipeline.py#L232)).
-  * Registers the model to a model registry ([pipelines/abalone/pipeline.py#L271](https://github.com/mleonowicz/dlp-model/blob/main/pipelines/abalone/pipeline.py#L271)) based on mean square error from evaluation ([pipelines/abalone/pipeline.py#L300](https://github.com/mleonowicz/dlp-model/blob/main/pipelines/abalone/pipeline.py#L300)).
+Model deployment code will be provided in another [dlp-deploy repository](https://github.com/mleonowicz/dlp-deploy).
 
 Team members:
 * [@kjpolak](https://github.com/kjpolak/)
 * [@mleonowicz](https://github.com/mleonowicz/)
 * [@madziejm](https://github.com/madziejm/)
 
-Original README info from the template follows below.
 
-## Layout of the SageMaker ModelBuild Project Template
-
-The template provides a starting point for bringing your SageMaker Pipeline development to production.
+## Code layout 
 
 ```
 |-- codebuild-buildspec.yml
 |-- CONTRIBUTING.md
 |-- pipelines
-|   |-- abalone
+|   |-- road-sign
 |   |   |-- evaluate.py
 |   |   |-- __init__.py
 |   |   |-- pipeline.py
 |   |   `-- preprocess.py
-|   |-- get_pipeline_definition.py
+|   |-- create_pipeline_definition.py
 |   |-- __init__.py
 |   |-- run_pipeline.py
 |   |-- _utils.py
@@ -48,14 +46,7 @@ The template provides a starting point for bringing your SageMaker Pipeline deve
 `-- tox.ini
 ```
 
-## Start here
-This is a sample code repository that demonstrates how you can organize your code for an ML business solution. This code repository is created as part of creating a Project in SageMaker. 
-
-In this example, we are solving the abalone age prediction problem using the abalone dataset (see below for more on the dataset). The following section provides an overview of how the code is organized and what you need to modify. In particular, `pipelines/pipelines.py` contains the core of the business logic for this problem. It has the code to express the ML steps involved in generating an ML model. You will also find the code for that supports preprocessing and evaluation steps in `preprocess.py` and `evaluate.py` files respectively.
-
-Once you understand the code structure described below, you can inspect the code and you can start customizing it for your own business case. This is only sample code, and you own this repository for your business use case. Please go ahead, modify the files, commit them and see the changes kick off the SageMaker pipelines in the CICD system.
-
-You can also use the `sagemaker-pipelines-project.ipynb` notebook to experiment from SageMaker Studio before you are ready to checkin your code.
+## Code description
 
 A description of some of the artifacts is provided below:
 <br/><br/>
@@ -66,7 +57,7 @@ Your codebuild execution instructions. This file contains the instructions neede
 ```
 
 <br/><br/>
-Your pipeline artifacts, which includes a pipeline module defining the required `get_pipeline` method that returns an instance of a SageMaker pipeline, a preprocessing script that is used in feature engineering, and a model evaluation script to measure the Mean Squared Error of the model that's trained by the pipeline. This is the core business logic, and if you want to create your own folder, you can do so, and implement the `get_pipeline` interface as illustrated here.
+The pipeline artifacts, which includes a pipeline module defining the required `create_pipeline` method that returns an instance of a SageMaker pipeline, a preprocessing script that is used in feature engineering, and a model evaluation script to measure the Mean Squared Error of the model that's trained by the pipeline. This is the core business logic, and if you want to create your own folder, you can do so, and implement the `create_pipeline` interface as illustrated here.
 
 ```
 |-- pipelines
@@ -82,7 +73,7 @@ Utility modules for getting pipeline definition jsons and running pipelines (you
 
 ```
 |-- pipelines
-|   |-- get_pipeline_definition.py
+|   |-- create_pipeline_definition.py
 |   |-- __init__.py
 |   |-- run_pipeline.py
 |   |-- _utils.py
@@ -106,14 +97,11 @@ The `tox` testing framework configuration:
 `-- tox.ini
 ```
 
-## Dataset for the Example Abalone Pipeline
+## Running
 
-The dataset used is the [UCI Machine Learning Abalone Dataset](https://archive.ics.uci.edu/ml/datasets/abalone) [1]. The aim for this task is to determine the age of an abalone (a kind of shellfish) from its physical measurements. At the core, it's a regression problem. 
-    
-The dataset contains several features - length (longest shell measurement), diameter (diameter perpendicular to length), height (height with meat in the shell), whole_weight (weight of whole abalone), shucked_weight (weight of meat), viscera_weight (gut weight after bleeding), shell_weight (weight after being dried), sex ('M', 'F', 'I' where 'I' is Infant), as well as rings (integer).
+Manual deployment from a local host is possible with
 
-The number of rings turns out to be a good approximation for age (age is rings + 1.5). However, to obtain this number requires cutting the shell through the cone, staining the section, and counting the number of rings through a microscope -- a time-consuming task. However, the other physical measurements are easier to determine. We use the dataset to build a predictive model of the variable rings through these other physical measurements.
+``` bash
+pip install . && python pipelines/run_pipeline.py --module-name road_sign.pipeline --role-arn <provide role here> --kwargs '{"region": "<provide region here>"}'
+```
 
-We'll upload the data to a bucket we own. But first we gather some constants we can use later throughout the notebook.
-
-[1] Dua, D. and Graff, C. (2019). [UCI Machine Learning Repository](http://archive.ics.uci.edu/ml). Irvine, CA: University of California, School of Information and Computer Science.

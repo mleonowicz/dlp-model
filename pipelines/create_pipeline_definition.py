@@ -17,7 +17,7 @@ import argparse
 import sys
 import traceback
 
-from pipelines._utils import get_pipeline_driver
+from pipelines._utils import create_pipeline_driver
 
 
 def main():  # pragma: no cover
@@ -56,7 +56,7 @@ def main():  # pragma: no cover
         sys.exit(2)
 
     try:
-        pipeline = get_pipeline_driver(args.module_name, args.kwargs)
+        pipeline = create_pipeline_driver(args.module_name, args.kwargs)
         content = pipeline.definition()
         if args.file_name:
             with open(args.file_name, "w") as f:
