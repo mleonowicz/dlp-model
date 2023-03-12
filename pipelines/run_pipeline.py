@@ -18,7 +18,11 @@ import json
 import sys
 import traceback
 
-from pipelines._utils import get_pipeline_driver, convert_struct, get_pipeline_custom_tags
+from pipelines._utils import (
+    convert_struct,
+    create_pipeline_custom_tags,
+    create_pipeline_driver,
+)
 
 
 def main():  # pragma: no cover
@@ -74,12 +78,14 @@ def main():  # pragma: no cover
     tags = convert_struct(args.tags)
 
     try:
-        pipeline = get_pipeline_driver(args.module_name, args.kwargs)
-        print("###### Creating/updating a SageMaker Pipeline with the following definition:")
+        pipeline = create_pipeline_driver(args.module_name, args.kwargs)
+        print(
+            "###### Creating/updating a SageMaker Pipeline with the following definition:"
+        )
         parsed = json.loads(pipeline.definition())
         print(json.dumps(parsed, indent=2, sort_keys=True))
 
-        all_tags = get_pipeline_custom_tags(args.module_name, args.kwargs, tags)
+        all_tags = create_pipeline_custom_tags(args.module_name, args.kwargs, tags)
 
         upsert_response = pipeline.upsert(
             role_arn=args.role_arn, description=args.description, tags=all_tags
@@ -92,11 +98,11 @@ def main():  # pragma: no cover
 
         print("Waiting for the execution to finish...")
 
-        # Setting the attempts and delay (in seconds) will modify the overall time the pipeline waits. 
+        # Setting the attempts and delay (in seconds) will modify the overall time the pipeline waits.
         # If the execution is taking a longer time, update these parameters to a larger value.
         # Eg: The total wait time is calculated as 60 * 120 = 7200 seconds (2 hours)
         execution.wait(max_attempts=120, delay=60)
-        
+
         print("\n#####Execution completed. Execution step details:")
 
         print(execution.list_steps())

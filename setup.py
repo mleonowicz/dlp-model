@@ -12,7 +12,7 @@ with open("README.md", "r") as f:
     readme = f.read()
 
 
-required_packages = ["sagemaker==2.93.0"]
+required_packages = ["sagemaker==2.137.0"]
 extras = {
     "test": [
         "black",
@@ -43,7 +43,7 @@ setuptools.setup(
     extras_require=extras,
     entry_points={
         "console_scripts": [
-            "get-pipeline-definition=pipelines.get_pipeline_definition:main",
+            "get-pipeline-definition=pipelines.create_pipeline_definition:main",
             "run-pipeline=pipelines.run_pipeline:main",
         ]
     },
