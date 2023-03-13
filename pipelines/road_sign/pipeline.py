@@ -294,6 +294,7 @@ def create_pipeline(
     base_job_prefix="RoadSign",
     processing_instance_type="ml.m5.xlarge",
     training_instance_type="ml.p2.xlarge",  # supress lovely "Instance type X is not supported by algorithm image-classification; only GPU instances are supported." limitation
+    sagemaker_project_arn=None,  # don't remove without refactoring codebuild-buildspec.yml and _utils.py where it's fixed
 ):
     """Gets a SageMaker ML Pipeline instance working with road sign data.
 
