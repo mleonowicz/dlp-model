@@ -1,4 +1,4 @@
-"""Feature engineers the road-sign dataset."""
+"""Feature engineers the road sign dataset."""
 import argparse
 import logging
 import shutil
