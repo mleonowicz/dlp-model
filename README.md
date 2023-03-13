@@ -8,10 +8,10 @@ The repository is based on a template described in [SageMaker MLOps Project Walk
 2. https://github.com/aws-samples/amazon-sagemaker-pipelines-mxnet-image-classification/
 
 The pipeline:
-  * Splits the dataset and converts it to RecordIO format in  ([pipelines/road-sign/pipeline.py#L112](https://github.com/mleonowicz/dlp-model/blob/main/pipelines/road-sign/pipeline.py#L112)). It is assumed, that the dataset is uploaded to S3 beforehand.
-  * Trains a classification model with transfer learning based on an already trained model ([pipelines/road-sign/pipeline.py#L151](https://github.com/mleonowicz/dlp-model/blob/main/pipelines/road-sign/pipeline.py#L151)).
-  * Evaluates the model on the test dataset ([pipelines/road-sign/pipeline.py#L199](https://github.com/mleonowicz/dlp-model/blob/main/pipelines/road-sign/pipeline.py#L199)).
-  * Registers the model to a model registry ([pipelines/road-sign/pipeline.py#L251](https://github.com/mleonowicz/dlp-model/blob/main/pipelines/road-sign/pipeline.py#L251)) when mean square error from the evaluation is lower than a specified threshold ([pipelines/road-sign/pipeline.py#L273](https://github.com/mleonowicz/dlp-model/blob/main/pipelines/road-sign/pipeline.py#L273)).
+  * Splits the dataset and converts it to RecordIO format in  ([pipelines/road_sign/pipeline.py#L112](https://github.com/mleonowicz/dlp-model/blob/main/pipelines/road_sign/pipeline.py#L112)). It is assumed, that the dataset is uploaded to S3 beforehand.
+  * Trains a classification model with transfer learning based on an already trained model ([pipelines/road_sign/pipeline.py#L151](https://github.com/mleonowicz/dlp-model/blob/main/pipelines/road_sign/pipeline.py#L151)).
+  * Evaluates the model on the test dataset ([pipelines/road_sign/pipeline.py#L199](https://github.com/mleonowicz/dlp-model/blob/main/pipelines/road_sign/pipeline.py#L199)).
+  * Registers the model to a model registry ([pipelines/road_sign/pipeline.py#L251](https://github.com/mleonowicz/dlp-model/blob/main/pipelines/road_sign/pipeline.py#L251)) when mean square error from the evaluation is lower than a specified threshold ([pipelines/road_sign/pipeline.py#L273](https://github.com/mleonowicz/dlp-model/blob/main/pipelines/road_sign/pipeline.py#L273)).
 
 Model deployment code will be provided in another [dlp-deploy repository](https://github.com/mleonowicz/dlp-deploy).
 
@@ -27,7 +27,7 @@ Team members:
 |-- codebuild-buildspec.yml
 |-- CONTRIBUTING.md
 |-- pipelines
-|   |-- road-sign
+|   |-- road_sign
 |   |   |-- evaluate.py
 |   |   |-- __init__.py
 |   |   |-- pipeline.py
