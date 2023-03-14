@@ -188,7 +188,6 @@ def create_training_step(
         "num_training_samples": TRAIN_NIMAGES,
         "epochs": max_nepoch,
         "learning_rate": learning_rate,
-        "checkpoint_frequency": None,  # save at the best validation accuracy epoch
     }
     classifier = Estimator(
         hyperparameters=hyperparameters,
