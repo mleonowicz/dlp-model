@@ -27,7 +27,11 @@ from sagemaker.workflow.condition_step import ConditionStep
 from sagemaker.workflow.conditions import ConditionLessThanOrEqualTo
 from sagemaker.workflow.functions import JsonGet
 from sagemaker.workflow.steps import CacheConfig
-from sagemaker.workflow.parameters import ParameterString
+from sagemaker.workflow.parameters import (
+    ParameterString,
+    ParameterInteger,
+    ParameterFloat,
+)
 from sagemaker.workflow.pipeline import Pipeline
 from sagemaker.workflow.pipeline_context import PipelineSession
 from sagemaker.workflow.properties import PropertyFile
@@ -149,7 +153,13 @@ def create_preprocessing_step(
 
 
 def create_training_step(
-    preprocessing_step, image_uri, instance_type, role, output_path
+    preprocessing_step,
+    image_uri,
+    instance_type,
+    role,
+    output_path,
+    max_nepoch,
+    learning_rate,
 ):
     inputs = {
         "train": sagemaker.inputs.TrainingInput(
@@ -176,8 +186,9 @@ def create_training_step(
         # "augmentation type": "crop_color_transform", # Weird, this gives unexpected "ClientError: Additional hyperparameters are not allowed ('augmentation type' was unexpected)"". This field should be accepted according to the schema. Don't augment for now.
         "num_classes": 43,
         "num_training_samples": TRAIN_NIMAGES,
-        "epochs": 1,
-        "learning_rate": 1e-5,
+        "epochs": max_nepoch,
+        "learning_rate": learning_rate,
+        "checkpoint_frequency": None,  # save at the best validation accuracy epoch
     }
     classifier = Estimator(
         hyperparameters=hyperparameters,
@@ -316,6 +327,11 @@ def create_pipeline(
         name="GtsrbS3Uri",  # todo document it
         default_value=f"s3://sagemaker-{region}-830437619288-datasets/GTSRB.zip",
     )
+    max_nepoch = ParameterInteger(name="MaxNEpoch", default_value=5)
+    learning_rate = ParameterFloat(
+        name="LearningRate",
+        default_value=1e-5,
+    )
 
     image_classification_image_uri = sagemaker.image_uris.retrieve(
         "image-classification", region
@@ -334,6 +350,8 @@ def create_pipeline(
         instance_type=training_instance_type,
         role=role,
         output_path=f"s3://{sagemaker_session.default_bucket()}/{base_job_prefix}/RoadSignTrain",
+        max_nepoch=max_nepoch,
+        learning_rate=learning_rate,
     )
 
     evaluation_step, evaluation_report = create_evaluation_step(
@@ -358,6 +376,8 @@ def create_pipeline(
             input_archive,
             processing_instance_type,
             training_instance_type,
+            max_nepoch,
+            learning_rate,
         ],
         steps=[
             preprocessing_step,
