@@ -24,7 +24,7 @@ from sagemaker.processing import (
 from sagemaker.mxnet import MXNetProcessor
 
 from sagemaker.workflow.condition_step import ConditionStep
-from sagemaker.workflow.conditions import ConditionLessThanOrEqualTo
+from sagemaker.workflow.conditions import ConditionGreaterThanOrEqualTo
 from sagemaker.workflow.functions import JsonGet
 from sagemaker.workflow.steps import CacheConfig
 from sagemaker.workflow.parameters import (
@@ -279,19 +279,22 @@ def create_model_registration_step(training_step, estimator, group_name):
     )
 
 
-def create_mse_cond_registration_step(
+def create_accuracy_cond_registration_step(
     register_step, evaluation_step, evaluation_report: PropertyFile
 ):
-    cond_lte = ConditionLessThanOrEqualTo(
+    cond_lte = ConditionGreaterThanOrEqualTo(
         left=JsonGet(
             step_name=evaluation_step.name,
             property_file=evaluation_report,
             json_path="classification_metrics.accuracy.value",
         ),
-        right=0.6,
+        right=0.9,  # i.e. 90%
     )
     return ConditionStep(
-        name="MSECond", conditions=[cond_lte], if_steps=[register_step], else_steps=[]
+        name="AccuracyCond",
+        conditions=[cond_lte],
+        if_steps=[register_step],
+        else_steps=[],
     )
 
 
@@ -365,7 +368,7 @@ def create_pipeline(
         training_step, classifier, model_package_group_name
     )
 
-    mse_cond_registration_step = create_mse_cond_registration_step(
+    accuracy_cond_registration_step = create_accuracy_cond_registration_step(
         registration_step, evaluation_step, evaluation_report
     )
 
@@ -382,6 +385,6 @@ def create_pipeline(
             preprocessing_step,
             training_step,
             evaluation_step,
-            mse_cond_registration_step,
+            accuracy_cond_registration_step,
         ],
     )
