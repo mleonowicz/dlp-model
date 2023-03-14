@@ -195,7 +195,7 @@ def create_training_step(
         role=role,
         instance_count=1,
         instance_type=instance_type,
-        volume_size=30,
+        volume_size=15,
         max_run=9 * 60 * 60,  # let's say we can afford 9 hours
         output_path=output_path,
     )
