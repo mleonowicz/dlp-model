@@ -300,10 +300,10 @@ def create_accuracy_cond_registration_step(
 
 def create_pipeline(
     region,
+    pipeline_name,
     role=None,
     default_bucket=None,
     model_package_group_name="RoadSignPackageGroup",
-    pipeline_name="RoadSignPipeline",
     base_job_prefix="RoadSign",
     processing_instance_type="ml.m5.xlarge",
     training_instance_type="ml.p2.xlarge",  # supress lovely "Instance type X is not supported by algorithm image-classification; only GPU instances are supported." limitation
